@@ -7,6 +7,7 @@ import com.example.product.models.Product;
 import com.example.product.services.IProductService;
 import com.example.product.exceptions.InvalidProductIdException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +25,13 @@ public class ProductController {
     @GetMapping("/products")
     public List<Product> getAllProducts() {
 
-        // The controllers responsibility is to return the products whose name starts with 'A'
-
-        List<Product> allProducts = productService.getAllProducts();
-        ArrayList<Product> filteredProducts = new ArrayList<>();
-        for(Product product: allProducts){
-            if(product.getName().startsWith("a"))
-            {
-                filteredProducts.add(product);
-            }
-        }
-        return filteredProducts;
+        return productService.getAllProducts();
+    }
+    //Get product by name
+    @GetMapping("/products/search")
+    public Page<Product> getProductsByName(@RequestParam("name") String name, @RequestParam("pageSize") int pageSize,
+                                           @RequestParam("startingElementIndex") int startingElementIndex){
+        return productService.getProductsContainingName(name, pageSize, startingElementIndex);
     }
 
     // Get a product with Id

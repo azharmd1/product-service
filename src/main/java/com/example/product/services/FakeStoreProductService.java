@@ -6,9 +6,13 @@ import com.example.product.exceptions.InvalidProductIdException;
 import com.example.product.exceptions.ProductDoesNotExistException;
 import com.example.product.models.Category;
 import com.example.product.models.Product;
+import com.example.product.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +30,8 @@ public class FakeStoreProductService implements IProductService{
     RestTemplate restTemplate;
     @Autowired
     private RedisTemplate<String, Product> redisTemplate;
+    @Autowired
+    private ProductRepository productRepository;
 
     public Product getProductFromResponseDto(ProductResponseDto responseDto){
         Product product = new Product();
@@ -81,8 +87,11 @@ public class FakeStoreProductService implements IProductService{
         }
         return output;
     }
-
-
+    @Override
+    public Page<Product> getProductsContainingName(String name, int pageSize, int startingElementIndex){
+     Page<Product> productPage = productRepository.findAllByNameContaining(name, PageRequest.of(startingElementIndex, pageSize, Sort.by("name")));
+        return productPage;
+    }
 
     @Override
     public Product addProduct(Product product) {

@@ -10,8 +10,10 @@ import com.example.product.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +45,20 @@ public class SelfProductService implements IProductService{
     public List<Product> getAllProducts() {
         return null;
     }
+
+    @Override
+    public Page<Product> getProductsContainingName(String name, int pageSize, int startingElementIndex){
+        List<Product> allProducts = getAllProducts();
+        ArrayList<Product> filteredProducts = new ArrayList<>();
+        for(Product product: allProducts){
+            if(product.getName().startsWith(name))
+            {
+                filteredProducts.add(product);
+            }
+        }
+        return (Page<Product>) filteredProducts;
+    }
+
 
     @Override
     public Product addProduct(Product product) {
